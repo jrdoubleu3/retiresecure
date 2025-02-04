@@ -32,16 +32,21 @@ document.addEventListener("DOMContentLoaded", function() {
     // ✅ Fetch and Display Waitlist Position and Referral Count
     async function updateWaitlistInfo() {
         try {
-            let userEmail = localStorage.getItem("userEmail"); // Assuming you store email after signup
-            if (!userEmail) return;
+            let userEmail = localStorage.getItem("userEmail"); // Storing email after signup
+            if (!userEmail) {
+                console.error("No user email found.");
+                return;
+            }
 
             let response = await fetch(`https://api.viral-loops.com/get-waitlist?email=${userEmail}`);
-            let data = await response.json();
+            if (!response.ok) throw new Error("Failed to fetch waitlist data.");
 
+            let data = await response.json();
             document.getElementById("waitlist-position").textContent = data.position || "N/A";
             document.getElementById("referral-count").textContent = data.referrals || "0";
         } catch (error) {
             console.error("Error fetching waitlist info:", error);
+            document.getElementById("waitlist-position").textContent = "Error";
         }
     }
 
