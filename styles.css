@@ -55,3 +55,11 @@ button:hover {
     font-size: 16px;
     font-weight: bold;
 }
+
+/* ✅ Fix for Viral Loops Form Visibility */
+form-widget {
+    display: block !important;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
