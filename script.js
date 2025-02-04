@@ -1,23 +1,33 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const signupCountElement = document.getElementById("signup-count");
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get("ref") || "";
 
-    // ✅ Update signup count from Viral Loops API (if applicable)
-    async function updateSignupCount() {
-        const defaultCount = 2500;
+    // ✅ Save referrer info in localStorage (persists even if they navigate)
+    if (referrer) {
+        localStorage.setItem("referralCode", referrer);
+    }
 
-        try {
-            let response = await fetch("https://api.viral-loops.com/signup-count"); // Replace with actual API
-            let data = await response.json();
-            let actualCount = data.count || defaultCount;
-
-            if (actualCount > defaultCount) {
-                signupCountElement.textContent =
-                    `🔥 Join ${actualCount.toLocaleString()}+ people taking control of their retirement! 🔥`;
-            }
-        } catch (error) {
-            console.error("Error fetching signup count:", error);
+    // ✅ Prefill the referral code in the Viral Loops form (if applicable)
+    function prefillReferralCode() {
+        let referralField = document.querySelector("input[name='referralCode']");
+        if (referralField) {
+            referralField.value = localStorage.getItem("referralCode") || "";
         }
     }
 
-    updateSignupCount();
+    setTimeout(prefillReferralCode, 1000); // Ensure form loads first
+
+    // ✅ Modify the referral link to use your domain
+    function generateReferralLink(userCode) {
+        return `https://yourdomain.com?ref=${userCode}`;
+    }
+
+    // ✅ Listen for Viral Loops referral link generation
+    document.addEventListener("VLReferralGenerated", function(event) {
+        let userCode = event.detail.referralCode;
+        let referralLink = generateReferralLink(userCode);
+
+        document.getElementById("referral-link").textContent = referralLink;
+        document.getElementById("referral-section").style.display = "block";
+    });
 });
