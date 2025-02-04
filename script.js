@@ -1,33 +1,31 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const referrer = urlParams.get("ref") || "";
+    const openPopupButton = document.getElementById("open-popup");
 
-    // ✅ Save referrer info in localStorage (persists even if they navigate)
-    if (referrer) {
-        localStorage.setItem("referralCode", referrer);
-    }
+    // ✅ Open Viral Loops Popup Form
+    openPopupButton.addEventListener("click", function() {
+        const popupForm = document.createElement("form-widget");
+        popupForm.setAttribute("mode", "popup");
+        popupForm.setAttribute("ucid", "3p2Lq2L4n2t6r596nPswqj2LaFI");
+        document.body.appendChild(popupForm);
+    });
 
-    // ✅ Prefill the referral code in the Viral Loops form (if applicable)
-    function prefillReferralCode() {
-        let referralField = document.querySelector("input[name='referralCode']");
-        if (referralField) {
-            referralField.value = localStorage.getItem("referralCode") || "";
+    // ✅ Update signup count dynamically
+    async function updateSignupCount() {
+        const defaultCount = 2500; // Base count to create social proof
+
+        try {
+            let response = await fetch("https://api.viral-loops.com/signup-count"); // Replace with real API if available
+            let data = await response.json();
+            let actualCount = data.count || defaultCount;
+
+            if (actualCount > defaultCount) {
+                document.getElementById("signup-count").textContent =
+                    `🔥 Join ${actualCount.toLocaleString()}+ people taking control of their retirement! 🔥`;
+            }
+        } catch (error) {
+            console.error("Error fetching signup count:", error);
         }
     }
 
-    setTimeout(prefillReferralCode, 1000); // Ensure form loads first
-
-    // ✅ Modify the referral link to use your domain
-    function generateReferralLink(userCode) {
-        return `https://yourdomain.com?ref=${userCode}`;
-    }
-
-    // ✅ Listen for Viral Loops referral link generation
-    document.addEventListener("VLReferralGenerated", function(event) {
-        let userCode = event.detail.referralCode;
-        let referralLink = generateReferralLink(userCode);
-
-        document.getElementById("referral-link").textContent = referralLink;
-        document.getElementById("referral-section").style.display = "block";
-    });
+    updateSignupCount();
 });
