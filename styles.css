@@ -24,12 +24,14 @@ p {
     color: #555;
 }
 
-input[type="email"] {
-    width: 80%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.hs-form-frame {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.hs-form-frame iframe {
+    width: 100%;
+    border: none;
 }
 
 button {
