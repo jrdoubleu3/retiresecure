@@ -56,10 +56,12 @@ button:hover {
     font-weight: bold;
 }
 
-/* ✅ Fix for Viral Loops Form Visibility */
+/* ✅ Ensure the Viral Loops form is visible */
 form-widget {
     display: block !important;
     width: 100%;
     max-width: 600px;
     margin: 20px auto;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
