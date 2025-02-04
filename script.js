@@ -1,47 +1,60 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const joinButton = document.getElementById("join-button");
-    const copyButton = document.getElementById("copy-button");
-    const emailInput = document.getElementById("email");
-    const referralSection = document.getElementById("referral-section");
-    const referralLinkElement = document.getElementById("referral-link");
-    const signupCountElement = document.getElementById("signup-count");
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-    joinButton.addEventListener("click", function() {
-        let email = emailInput.value;
-        if (!email.trim()) {
-            alert("Please enter your email.");
-            return;
-        }
-        referralSection.style.display = "block";
-        let referralLink = `https://yourdomain.com?ref=${btoa(email)}`;
-        referralLinkElement.textContent = referralLink;
-    });
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    copyButton.addEventListener("click", function() {
-        let link = referralLinkElement.textContent;
-        navigator.clipboard.writeText(link).then(() => {
-            alert("Referral link copied to clipboard!");
-        }).catch(err => {
-            console.error("Could not copy text: ", err);
-        });
-    });
+h1 {
+    color: #333;
+}
 
-    // Simulate fetching actual signup count (replace with real API call if needed)
-    async function updateSignupCount() {
-        const defaultCount = 2500;
-        try {
-            let response = await fetch('/api/get-signups'); // Replace with actual API
-            let data = await response.json();
-            let actualCount = data.count || defaultCount;
+p {
+    font-size: 18px;
+    color: #555;
+}
 
-            if (actualCount > defaultCount) {
-                signupCountElement.textContent = 
-                    `🔥 Join ${actualCount.toLocaleString()}+ people taking control of their retirement! 🔥`;
-            }
-        } catch (error) {
-            console.error("Error fetching signup count:", error);
-        }
-    }
+.hs-form-frame {
+    margin-top: 20px;
+    text-align: left;
+}
 
-    updateSignupCount();
-});
+.hs-form-frame iframe {
+    width: 100%;
+    border: none;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+#referral-section {
+    display: none;
+    margin-top: 20px;
+}
+
+.referral-link {
+    font-size: 16px;
+    color: #007bff;
+    word-wrap: break-word;
+}
