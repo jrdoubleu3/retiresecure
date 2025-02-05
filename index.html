@@ -8,18 +8,15 @@
 
     <!-- 🔹 Viral Loops Loader -->
     <script type="text/javascript" src="https://app.viral-loops.com/widgetsV2/core/loader.js" data-campaign-id="wP2tnb8QYvhUefUMciwykz0jPsE" id="viral-loops-loader"></script>
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16853669153">
-</script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-16853669153');
-</script>
     
+    <!-- Google Ads Global Site Tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16853669153"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-16853669153');
+    </script>
 </head>
 <body>
     <div class="hero">
@@ -28,6 +25,21 @@
             <form-widget ucid='wP2tnb8QYvhUefUMciwykz0jPsE'></form-widget>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form-widget");
+            if (form) {
+                form.addEventListener("submit", function() {
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-16853669153/CZIwCM7JvZkaEKGquuQ-',
+                        'value': 1.0,
+                        'currency': 'USD'
+                    });
+                });
+            }
+        });
+    </script>
 
     <script src="script.js"></script>
 </body>
