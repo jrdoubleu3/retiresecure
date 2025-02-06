@@ -4,45 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employer-Independent Retirement Savings</title>
+    <meta name="description" content="A retirement savings plan independent of employers, ensuring financial security for the future.">
     <link rel="stylesheet" href="styles.css">
 
     <!-- 🔹 Viral Loops Loader -->
-    <script type="text/javascript" src="https://app.viral-loops.com/widgetsV2/core/loader.js" data-campaign-id="wP2tnb8QYvhUefUMciwykz0jPsE" id="viral-loops-loader"></script>
-    
-   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16853669153">
-</script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script type="text/javascript" src="https://app.viral-loops.com/widgetsV2/core/loader.js" 
+        data-campaign-id="wP2tnb8QYvhUefUMciwykz0jPsE" id="viral-loops-loader">
+    </script>
 
-  gtag('config', 'AW-16853669153');
-</script>
+    <!-- 🔹 Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16853669153" onload="gtagLoaded()"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+
+        function gtagLoaded() {
+            gtag('js', new Date());
+            gtag('config', 'AW-16853669153');
+        }
+    </script>
 </head>
 <body>
     <div class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-form">
-            <form-widget ucid='wP2tnb8QYvhUefUMciwykz0jPsE'></form-widget>
+            <form-widget ucid="wP2tnb8QYvhUefUMciwykz0jPsE"></form-widget>
         </div>
     </div>
 
+    <!-- 🔹 Form Submission Tracking -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const form = document.querySelector("form-widget");
-            if (form) {
-                form.addEventListener("submit", function() {
-                    gtag('event', 'conversion', {
-                        'send_to': 'AW-16853669153/CZIwCM7JvZkaEKGquuQ-',
-                        'value': 1.0,
-                        'currency': 'USD'
+            setTimeout(() => { // Ensure the form-widget has loaded before adding an event listener
+                const form = document.querySelector("form-widget");
+                if (form) {
+                    form.addEventListener("submit", function() {
+                        gtag('event', 'conversion', {
+                            'send_to': 'AW-16853669153/CZIwCM7JvZkaEKGquuQ-',
+                            'value': 1.0,
+                            'currency': 'USD'
+                        });
                     });
-                });
-            }
+                } else {
+                    console.warn("Form widget not found!");
+                }
+            }, 1000); // Delay of 1 second to ensure widget initialization
         });
     </script>
 
-    <script src="script.js"></script>
+    <!-- 🔹 External Scripts (Deferred for Performance) -->
+    <script defer src="script.js"></script>
 </body>
 </html>
