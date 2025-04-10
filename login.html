@@ -318,7 +318,10 @@
         const redirectTo = urlParams.get('redirect') || 'index.html';
         
         // Only redirect if we have a redirect parameter and are already logged in
-        if (redirectTo !== 'index.html' && localStorage.getItem('isLoggedIn') === 'true') {
+        // AND we're not already on the login page
+        if (redirectTo !== 'index.html' && 
+            localStorage.getItem('isLoggedIn') === 'true' && 
+            !window.location.href.includes('login.html')) {
             window.location.href = redirectTo;
         }
         

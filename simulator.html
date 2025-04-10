@@ -624,69 +624,41 @@
     <script src="wealth_simulator_6040.js"></script>
     <script src="wealth_simulator_100.js"></script>
     <script>
-        // Check if user is logged in
-        function checkLoginStatus() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             const loginTime = localStorage.getItem('loginTime');
             const currentTime = new Date().getTime();
-            const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
-
-            if (!isLoggedIn || !loginTime || (currentTime - loginTime) > 24 * 60 * 60 * 1000) {
-                // If not logged in or session expired, redirect to login page
-                window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
-                return false;
-            }
-            return true;
-        }
-
-        // Call checkLoginStatus when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if we're coming from the login page
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromLogin = urlParams.get('fromLogin') === 'true';
             
-            if (fromLogin) {
-                // If we're coming from login, proceed with initialization
-                formatInputs();
-                
-                // Add event listeners for input formatting
-                document.querySelectorAll('input[type="text"]').forEach(input => {
-                    input.addEventListener('input', function() {
-                        formatCurrencyInput(this);
-                    });
-                });
-                
-                // Add event listeners for form submission
-                document.getElementById('simulator-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    runSimulation();
-                });
-                
-                // Initialize charts
-                initializeCharts();
-            } else if (!checkLoginStatus()) {
-                // If not logged in, redirect to login page
+            // If not logged in or session expired, redirect to login page
+            if (!isLoggedIn || !loginTime || (currentTime - loginTime) > 24 * 60 * 60 * 1000) {
+                window.location.href = 'login.html?redirect=simulator.html';
                 return;
-            } else {
-                // If already logged in, proceed with initialization
-                formatInputs();
-                
-                // Add event listeners for input formatting
-                document.querySelectorAll('input[type="text"]').forEach(input => {
-                    input.addEventListener('input', function() {
-                        formatCurrencyInput(this);
-                    });
-                });
-                
-                // Add event listeners for form submission
-                document.getElementById('simulator-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    runSimulation();
-                });
-                
-                // Initialize charts
-                initializeCharts();
             }
+            
+            // If logged in, show the content
+            document.querySelector('.simulator-section').style.display = 'block';
+            document.querySelector('.calculator-section').style.display = 'block';
+            
+            // Format inputs and initialize charts
+            formatInputs();
+            
+            // Add event listeners for input formatting
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatCurrencyInput(this);
+                });
+            });
+            
+            // Add event listeners for form submission
+            document.getElementById('simulator-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                runSimulation();
+            });
+            
+            // Initialize charts
+            initializeCharts();
         });
         
         // Global variables to store results from each simulator
