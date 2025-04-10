@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Pension 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #f8f8f8;
+            --card-background: #fff;
+            --border-color: #e0e0e0;
+            --button-color: #000000;
+            --button-hover-color: #333;
+            --success-color: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            background-color: #007AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 8rem 2rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-container {
+            max-width: 600px;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .success-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .success-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .success-header p {
+            color: var(--light-text);
+        }
+
+        .success-details {
+            margin-bottom: 2rem;
+            text-align: left;
+            padding: 1.5rem;
+            background-color: var(--background-color);
+            border-radius: 8px;
+        }
+
+        .success-details h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .details-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .details-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .details-label {
+            color: var(--light-text);
+        }
+
+        .details-value {
+            font-weight: 500;
+        }
+
+        .next-steps {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .next-steps h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .next-steps ol {
+            padding-left: 1.5rem;
+        }
+
+        .next-steps li {
+            margin-bottom: 0.75rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .primary-button {
+            background-color: var(--button-color);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .primary-button:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            color: var(--primary-color);
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background-color: var(--background-color);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .success-container {
+                padding: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#" class="nav-link">Tools</a>
+                    <div class="dropdown-content">
+                        <div class="dropdown-menu">
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Pension 2.0 Simulator</a>
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Optimal Savings Calculator</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="checkout.html" class="cta-button">Reserve My Spot</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="success-container">
+            <div class="success-icon">✓</div>
+            
+            <div class="success-header">
+                <h1>Payment Successful!</h1>
+                <p>Thank you for joining Pension 2.0. Your account has been created.</p>
+            </div>
+            
+            <div class="success-details">
+                <h2>Order Details</h2>
+                <div class="details-item">
+                    <span class="details-label">Plan</span>
+                    <span class="details-value" id="plan-name">Loading...</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">Order ID</span>
+                    <span class="details-value" id="order-id">ORD-123456</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">Date</span>
+                    <span class="details-value" id="order-date">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h2>Next Steps</h2>
+                <ol>
+                    <li>Check your email for a confirmation and login instructions</li>
+                    <li>Complete your profile to get personalized recommendations</li>
+                    <li>Connect your bank account to start saving automatically</li>
+                </ol>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="login.html" class="primary-button">Go to Dashboard</a>
+                <a href="index.html" class="secondary-button">Return to Home</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Pension 2.0</h4>
+                <p>Built for People Who Want Their Money to Work Smarter</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>hello@pension2.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <p>Twitter</p>
+                <p>LinkedIn</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Get plan from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = urlParams.get('plan');
+        
+        // Set plan name based on selection
+        const planNameElement = document.getElementById('plan-name');
+        
+        if (plan) {
+            switch(plan) {
+                case 'autosave':
+                    planNameElement.textContent = 'AutoSave';
+                    break;
+                case 'pension':
+                case 'default': // Default to Pension Builder when coming from home page
+                    planNameElement.textContent = 'Pension Builder';
+                    break;
+                case 'payout':
+                    planNameElement.textContent = 'Payout+';
+                    break;
+                default:
+                    planNameElement.textContent = 'Pension Builder'; // Default to Pension Builder
+            }
+        } else {
+            planNameElement.textContent = 'Pension Builder'; // Default to Pension Builder
+        }
+        
+        // Set current date
+        const orderDateElement = document.getElementById('order-date');
+        const now = new Date();
+        orderDateElement.textContent = now.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    </script>
+</body>
+</html> 

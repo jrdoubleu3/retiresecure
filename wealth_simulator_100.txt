@@ -1,0 +1,136 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+  Label,
+} from "recharts";
+
+export default function RetirementSimulatorApp() {
+  const [age, setAge] = useState(30);
+  const [initialWealth, setInitialWealth] = useState(100000);
+  const [income, setIncome] = useState(80000);
+  const [results, setResults] = useState(null);
+
+  const simulate = () => {
+    const mu = 0.0887;
+    const sigma = 0.1559;
+    const rf = 0.0425;
+    const rho = 0.02;
+    const theta = 0.025;
+    const g = 0.025;
+    const retirementAge = 67;
+    const lifespan = 100;
+    const years = retirementAge - age;
+    const n = 10000;
+    const finalWealths = [];
+
+    for (let sim = 0; sim < n; sim++) {
+      let W = initialWealth;
+      for (let t = 0; t < years; t++) {
+        const currentAge = age + t;
+        const yearsToLive = lifespan - currentAge;
+        const incomeThisYear = income * (1 + g) ** t;
+
+        // Adjusted human capital from age (currentAge + 1) to 67
+        const remainingYears = retirementAge - currentAge - 1;
+        const futureIncome = Array.from({ length: remainingYears > 0 ? remainingYears : 0 }, (_, i) =>
+          income * (1 + g) ** (t + i + 1) / (1 + rf + rho) ** (i + 1)
+        );
+        const HC = futureIncome.reduce((sum, y) => sum + y, 0);
+
+        const K = theta / (1 - (1 + theta) ** -yearsToLive);
+        const consumption = (W + incomeThisYear + HC) * K;
+        const savings = incomeThisYear - consumption;
+
+        const r = mu + sigma * randomNormal();
+        W = W * (1 + r) + savings;
+      }
+      finalWealths.push(W);
+    }
+
+    const sorted = finalWealths.slice().sort((a, b) => a - b);
+    const mean = sorted.reduce((a, b) => a + b, 0) / n;
+    const median = sorted[Math.floor(n / 2)];
+
+    const binCount = 50;
+    const maxW = Math.max(...finalWealths);
+    const binSize = maxW / binCount;
+    const bins = Array.from({ length: binCount }, (_, i) => ({
+      bin: Math.round(i * binSize),
+      count: 0,
+    }));
+    finalWealths.forEach(w => {
+      const index = Math.min(Math.floor(w / binSize), binCount - 1);
+      bins[index].count++;
+    });
+
+    setResults({ bins, mean, median });
+  };
+
+  const randomNormal = () => {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  };
+
+  return (
+    <div className="p-4 max-w-4xl mx-auto space-y-4">
+      <Card>
+        <CardContent className="grid grid-cols-2 gap-4 p-4">
+          <div>
+            <label>Current Age</label>
+            <Input type="number" value={age} onChange={e => setAge(+e.target.value)} />
+          </div>
+          <div>
+            <label>Initial Wealth ($)</label>
+            <Input type="number" value={initialWealth} onChange={e => setInitialWealth(+e.target.value)} />
+          </div>
+          <div>
+            <label>After-Tax Income ($)</label>
+            <Input type="number" value={income} onChange={e => setIncome(+e.target.value)} />
+          </div>
+          <div className="col-span-2">
+            <Button onClick={simulate}>Run Simulation</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {results && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xl font-bold">Wealth at Retirement</h2>
+              <div className="text-sm text-right">
+                <div className="text-red-600 font-medium">Mean: ${results.mean.toLocaleString()}</div>
+                <div className="text-green-600 font-medium">Median: ${results.median.toLocaleString()}</div>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={results.bins}>
+                <XAxis dataKey="bin" label={{ value: "Wealth ($)", position: "insideBottom", offset: -5 }} />
+                <YAxis label={{ value: "Frequency", angle: -90, position: "insideLeft" }} />
+                <Tooltip formatter={(value) => `${value}`} labelFormatter={(label) => `$${label.toLocaleString()}`} />
+                <Bar dataKey="count" fill="#60a5fa" stroke="#000" strokeWidth={0.5} />
+                <ReferenceLine x={Math.round(results.mean)} stroke="red" strokeDasharray="3 3">
+                  <Label position="top" fill="red">Mean</Label>
+                </ReferenceLine>
+                <ReferenceLine x={Math.round(results.median)} stroke="green" strokeDasharray="3 3">
+                  <Label position="top" fill="green">Median</Label>
+                </ReferenceLine>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

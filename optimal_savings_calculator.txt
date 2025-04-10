@@ -1,0 +1,104 @@
+import { useState } from "react";
+
+export default function OptimalSavingsCalculator() {
+  const [age, setAge] = useState(30);
+  const [income, setIncome] = useState(80000);
+  const [wealth, setWealth] = useState(100000);
+  const [results, setResults] = useState<{
+    humanCapital: number;
+    totalResources: number;
+    mertonPercent: number;
+    optimalConsumption: number;
+    optimalSavings: number;
+  } | null>(null);
+
+  const calculate = () => {
+    const retirementAge = 67;
+    const deathAge = 100;
+    const r = 0.0425;
+    const rho = 0.02;
+    const delta = r + rho;
+    const incomeGrowth = 0.025;
+
+    const yearsToDeath = deathAge - age;
+    const workingYears = retirementAge - (age + 1); // start from next year only
+
+    if (workingYears <= 0 || yearsToDeath <= 0) {
+      setResults(null);
+      return;
+    }
+
+    let humanCapital = 0;
+    for (let t = 1; t <= workingYears; t++) {
+      const incomeAtT = income * Math.pow(1 + incomeGrowth, t);
+      const discountFactor = 1 / Math.pow(1 + delta, t);
+      humanCapital += incomeAtT * discountFactor;
+    }
+
+    const mertonPercent = incomeGrowth / (1 - Math.pow(1 + incomeGrowth, -yearsToDeath));
+    const totalResources = wealth + income + humanCapital;
+    const optimalConsumption = mertonPercent * totalResources;
+    const optimalSavings = income - optimalConsumption;
+
+    setResults({
+      humanCapital: Math.round(humanCapital),
+      totalResources: Math.round(totalResources),
+      mertonPercent: +(mertonPercent * 100).toFixed(2),
+      optimalConsumption: Math.round(optimalConsumption),
+      optimalSavings: Math.round(optimalSavings),
+    });
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-4 bg-white rounded-2xl shadow">
+      <h1 className="text-xl font-bold mb-4">Optimal Savings Calculator</h1>
+
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Your Age</label>
+        <input
+          type="number"
+          value={age}
+          onChange={(e) => setAge(parseInt(e.target.value))}
+          className="w-full border p-2 rounded"
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Annual After-Tax Income ($)</label>
+        <input
+          type="number"
+          value={income}
+          onChange={(e) => setIncome(parseFloat(e.target.value))}
+          className="w-full border p-2 rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Current Investable Wealth ($)</label>
+        <input
+          type="number"
+          value={wealth}
+          onChange={(e) => setWealth(parseFloat(e.target.value))}
+          className="w-full border p-2 rounded"
+        />
+      </div>
+
+      <button
+        onClick={calculate}
+        className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
+      >
+        Calculate
+      </button>
+
+      {results && (
+        <div className="mt-6 space-y-2 text-center">
+          <p><strong>Human Capital:</strong> ${results.humanCapital.toLocaleString()}</p>
+          <p><strong>Total Resources:</strong> ${results.totalResources.toLocaleString()}</p>
+          <p><strong>Merton %:</strong> {results.mertonPercent}%</p>
+          <p><strong>Optimal Consumption:</strong> ${results.optimalConsumption.toLocaleString()}</p>
+          <p><strong>Optimal Savings:</strong> ${results.optimalSavings.toLocaleString()}</p>
+        </div>
+      )}
+    </div>
+  );
+}

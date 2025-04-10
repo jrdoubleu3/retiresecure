@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Pension 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #fff;
+            --card-background: #f8f8f8;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.5;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-toggle:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-toggle::after {
+            content: '';
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-toggle:hover::after {
+            transform: rotate(225deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            min-width: 200px;
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-cta {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background-color: #0066cc;
+            transform: translateY(-1px);
+        }
+
+        /* Login Container Styles */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .certifications {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .certification-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .certification-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .certification-item input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+
+        .certification-item label {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 10px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background: #0056b3;
+        }
+
+        .login-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-footer a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle">Tools</a>
+                    <div class="dropdown-menu">
+                        <a href="login.html?redirect=simulator.html" class="dropdown-item">Pension 2.0 Simulator</a>
+                        <a href="login.html?redirect=simulator.html" class="dropdown-item">Optimal Savings Calculator</a>
+                    </div>
+                </div>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="checkout.html" class="nav-cta">Reserve My Spot</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Sign in</h1>
+        </div>
+        <form id="login-form">
+            <div class="certifications">
+                <div class="certification-item">
+                    <input type="checkbox" id="cert1" required>
+                    <label for="cert1">I understand this tool shows simulated, hypothetical results based on model assumptions and not actual client performance.</label>
+                </div>
+                <div class="certification-item">
+                    <input type="checkbox" id="cert2" required>
+                    <label for="cert2">I understand the tool is for educational purposes and does not provide personalized investment advice.</label>
+                </div>
+                <div class="certification-item">
+                    <input type="checkbox" id="cert3" required>
+                    <label for="cert3">I understand the projections are forward-looking and based on assumed returns and volatility, not real-time decisions or guarantees.</label>
+                </div>
+                <div class="certification-item">
+                    <input type="checkbox" id="cert4" required>
+                    <label for="cert4">I confirm I have the financial knowledge to interpret these results and understand their limitations.</label>
+                </div>
+                <div class="certification-item">
+                    <input type="checkbox" id="cert5" required>
+                    <label for="cert5">I agree not to base financial decisions solely on this tool, and I understand it does not offer investment recommendations.</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <button type="submit" class="login-button" id="login-button">Sign in</button>
+        </form>
+        <div class="login-footer">
+            <p>Don't have an account? <a href="checkout.html">Join the waitlist</a></p>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get('redirect') || 'index.html';
+        
+        // Only redirect if we have a redirect parameter and are already logged in
+        if (redirectTo !== 'index.html' && localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = redirectTo;
+        }
+        
+        // Enable/disable login button based on checkbox status
+        const certifications = document.querySelectorAll('.certification-item input[type="checkbox"]');
+        const loginButton = document.getElementById('login-button');
+        
+        function updateLoginButton() {
+            let allChecked = true;
+            certifications.forEach(cert => {
+                if (!cert.checked) {
+                    allChecked = false;
+                }
+            });
+            
+            loginButton.disabled = !allChecked;
+        }
+        
+        certifications.forEach(cert => {
+            cert.addEventListener('change', updateLoginButton);
+        });
+        
+        // Initial check
+        updateLoginButton();
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Check if all certifications are checked
+            let allChecked = true;
+            certifications.forEach(cert => {
+                if (!cert.checked) {
+                    allChecked = false;
+                }
+            });
+            
+            if (!allChecked) {
+                alert('Please agree to all certifications before proceeding.');
+                return;
+            }
+            
+            if (email && password) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('loginTime', new Date().getTime().toString());
+                window.location.href = redirectTo;
+            }
+        });
+    </script>
+</body>
+</html> 

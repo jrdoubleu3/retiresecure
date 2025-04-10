@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pension 2.0 - Endowment Simulator">
+    <title>Wealth Simulator - Endowment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #fff;
+            --card-background: #f8f8f8;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .comparison-section {
+            margin-bottom: 2rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .comparison-card {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .comparison-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .comparison-details {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+
+        .endowment {
+            border-top: 4px solid #007AFF;
+        }
+
+        .portfolio-6040 {
+            border-top: 4px solid #34D399;
+        }
+
+        .portfolio-100 {
+            border-top: 4px solid #F59E0B;
+        }
+
+        .simulator-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-section {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--secondary-color);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .results-summary {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mean, .median {
+            font-weight: 500;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .simulator-container {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .calculator-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .result-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--light-text);
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .result-description {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add styles for the help link */
+        .help-link {
+            font-size: 0.875rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .help-link:hover {
+            text-decoration: underline;
+        }
+
+        .help-link i {
+            font-size: 1rem;
+        }
+
+        /* Add styles for the select dropdown */
+        .input-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .input-select:hover {
+            border-color: var(--accent-color);
+        }
+
+        .input-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+
+        /* Add styles for formatted inputs */
+        .formatted-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .formatted-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navigation styles */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--primary-color);
+            color: white;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .nav-logo {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .nav-cta {
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background-color: #0066cc;
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-toggle::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+            border-top: 0.3rem solid;
+            border-right: 0.3rem solid transparent;
+            border-left: 0.3rem solid transparent;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--card-background);
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-cta {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle">Tools</a>
+                    <div class="dropdown-menu">
+                        <a href="login.html?redirect=simulator.html" class="dropdown-item">Pension 2.0 Simulator</a>
+                        <a href="login.html?redirect=simulator.html" class="dropdown-item">Optimal Savings Calculator</a>
+                    </div>
+                </div>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="checkout.html" class="nav-cta">Reserve My Spot</a>
+            </div>
+        </div>
+    </nav>
+
+    <main style="padding-top: 80px;">
+        <section class="simulator-section">
+            <div class="container">
+                <h1>Wealth Simulator</h1>
+                
+                <div class="comparison-section">
+                    <h2>Investment Strategy Comparison</h2>
+                    <div class="comparison-grid">
+                        <div class="comparison-card endowment">
+                            <h3>Merton Method</h3>
+                            <div class="comparison-value" id="endowment-mean">$0</div>
+                            <div class="comparison-details">
+                                <p>Return: 10.05%</p>
+                                <p>Volatility: 12.45%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-card portfolio-6040">
+                            <h3>60/40 Portfolio</h3>
+                            <div class="comparison-value" id="portfolio-6040-mean">$0</div>
+                            <div class="comparison-details">
+                                <p>Return: 6.30%</p>
+                                <p>Volatility: 11.49%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-card portfolio-100">
+                            <h3>100% S&P 500</h3>
+                            <div class="comparison-value" id="portfolio-100-mean">$0</div>
+                            <div class="comparison-details">
+                                <p>Return: 7.44%</p>
+                                <p>Volatility: 18.41%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="simulator-container">
+                    <div class="input-section">
+                        <div class="input-group">
+                            <label for="age">Current Age</label>
+                            <input type="number" id="age" min="18" max="100" value="30">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="retirement-age">Retirement Age</label>
+                            <input type="number" id="retirement-age" min="40" max="100" value="67">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="initial-wealth">Investable Wealth (excluding primary residence) ($)</label>
+                            <input type="text" id="initial-wealth" value="100,000" class="formatted-input">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="income">Annual After-Tax Income ($)</label>
+                            <input type="text" id="income" value="80,000" class="formatted-input">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="optimal-savings-percentage">
+                                Optimal Savings Percentage (%)
+                                <a href="#calculator-section" class="help-link" title="Learn more about optimal savings">
+                                    <i class="fas fa-info-circle"></i> What is this?
+                                </a>
+                            </label>
+                            <select id="optimal-savings-percentage" class="input-select">
+                                <option value="100">100%</option>
+                                <option value="75">75%</option>
+                                <option value="50">50%</option>
+                                <option value="25">25%</option>
+                                <option value="10">10%</option>
+                                <option value="1">1%</option>
+                            </select>
+                        </div>
+                        
+                        <button id="simulate-button">Run Simulation</button>
+                    </div>
+                    
+                    <div class="results-section">
+                        <div id="simulation-results">
+                            <p>Click "Run Simulation" to see results.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optimal Savings Calculator Section -->
+        <section class="calculator-section" id="calculator-section">
+            <div class="container">
+                <h2>Optimal Consumption & Savings Calculator</h2>
+                <div class="calculator-container">
+                    <div class="input-section">
+                        <div class="input-group">
+                            <label for="calc-age">Current Age</label>
+                            <input type="number" id="calc-age" min="18" max="100" value="30">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="calc-retirement-age">Target Retirement Age</label>
+                            <input type="number" id="calc-retirement-age" min="40" max="100" value="67">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="calc-income">Annual After-Tax Income ($)</label>
+                            <input type="text" id="calc-income" value="80,000" class="formatted-input">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="calc-wealth">Investable Wealth (excluding primary residence) ($)</label>
+                            <input type="text" id="calc-wealth" value="100,000" class="formatted-input">
+                        </div>
+                        
+                        <button id="calculate-optimal">Calculate Optimal Consumption</button>
+                    </div>
+                    
+                    <div class="results-section" id="calculator-results" style="display: none;">
+                        <div class="results-header">
+                            <h3>Optimal Consumption Results</h3>
+                            <p>Recommended consumption and savings based on your inputs</p>
+                        </div>
+                        <div class="results-grid" style="grid-template-columns: 1fr;">
+                            <div class="result-card">
+                                <h4>Optimal Consumption</h4>
+                                <div class="result-value" id="optimal-consumption">$0</div>
+                                <p class="result-description">Annual amount to consume</p>
+                            </div>
+                            <div class="result-card">
+                                <h4>Optimal Savings</h4>
+                                <div class="result-value" id="optimal-savings">$0</div>
+                                <p class="result-description">Annual amount to save</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Pension 2.0</h4>
+                <p>Built for People Who Want Their Money to Work Smarter</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>hello@pension2.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Pension 2.0. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="wealth_simulator.js"></script>
+    <script src="wealth_simulator_6040.js"></script>
+    <script src="wealth_simulator_100.js"></script>
+    <script>
+        // Check if user is logged in
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const loginTime = localStorage.getItem('loginTime');
+            const currentTime = new Date().getTime();
+            const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+
+            if (!isLoggedIn || !loginTime || (currentTime - loginTime) > 24 * 60 * 60 * 1000) {
+                // If not logged in or session expired, redirect to login page
+                window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
+                return false;
+            }
+            return true;
+        }
+
+        // Call checkLoginStatus when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're coming from the login page
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromLogin = urlParams.get('fromLogin') === 'true';
+            
+            if (fromLogin) {
+                // If we're coming from login, proceed with initialization
+                formatInputs();
+                
+                // Add event listeners for input formatting
+                document.querySelectorAll('input[type="text"]').forEach(input => {
+                    input.addEventListener('input', function() {
+                        formatCurrencyInput(this);
+                    });
+                });
+                
+                // Add event listeners for form submission
+                document.getElementById('simulator-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    runSimulation();
+                });
+                
+                // Initialize charts
+                initializeCharts();
+            } else if (!checkLoginStatus()) {
+                // If not logged in, redirect to login page
+                return;
+            } else {
+                // If already logged in, proceed with initialization
+                formatInputs();
+                
+                // Add event listeners for input formatting
+                document.querySelectorAll('input[type="text"]').forEach(input => {
+                    input.addEventListener('input', function() {
+                        formatCurrencyInput(this);
+                    });
+                });
+                
+                // Add event listeners for form submission
+                document.getElementById('simulator-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    runSimulation();
+                });
+                
+                // Initialize charts
+                initializeCharts();
+            }
+        });
+        
+        // Global variables to store results from each simulator
+        let endowmentResults = null;
+        let portfolio6040Results = null;
+        let portfolio100Results = null;
+
+        // Override the displayResults function in each simulator to capture results
+        function captureEndowmentResults(results) {
+            endowmentResults = results;
+            updateComparisonDisplay();
+        }
+
+        function capturePortfolio6040Results(results) {
+            portfolio6040Results = results;
+            updateComparisonDisplay();
+        }
+
+        function capturePortfolio100Results(results) {
+            portfolio100Results = results;
+            updateComparisonDisplay();
+        }
+
+        // Update the comparison display with results from all simulators
+        function updateComparisonDisplay() {
+            if (endowmentResults) {
+                document.getElementById('endowment-mean').textContent = 
+                    endowmentResults.mean.toLocaleString(undefined, {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0
+                    });
+            }
+            
+            if (portfolio6040Results) {
+                document.getElementById('portfolio-6040-mean').textContent = 
+                    portfolio6040Results.mean.toLocaleString(undefined, {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0
+                    });
+            }
+            
+            if (portfolio100Results) {
+                document.getElementById('portfolio-100-mean').textContent = 
+                    portfolio100Results.mean.toLocaleString(undefined, {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0
+                    });
+            }
+        }
+
+        // Override the simulate function in each simulator to run all simulations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the original simulate button
+            const simulateButton = document.getElementById('simulate-button');
+            
+            // Add a new click handler that runs all simulations
+            simulateButton.addEventListener('click', function() {
+                // Clear previous results
+                document.getElementById('simulation-results').innerHTML = '';
+                
+                // Run the Endowment simulator
+                const endowmentSimulator = new EndowmentSimulator();
+                endowmentSimulator.simulate();
+                
+                // Run the 60/40 Portfolio simulator
+                const portfolio6040Simulator = new Portfolio6040Simulator();
+                portfolio6040Simulator.simulate();
+                
+                // Run the 100% S&P 500 simulator
+                const portfolio100Simulator = new Portfolio100Simulator();
+                portfolio100Simulator.simulate();
+            });
+        });
+
+        // Create classes for each simulator to avoid conflicts
+        class EndowmentSimulator {
+            constructor() {
+                this.age = +document.getElementById('age').value;
+                this.retirementAge = +document.getElementById('retirement-age').value;
+                this.initialWealth = +document.getElementById('initial-wealth').value.replace(/,/g, '');
+                this.income = +document.getElementById('income').value.replace(/,/g, '');
+                this.optimalSavingsPercentage = +document.getElementById('optimal-savings-percentage').value;
+            }
+
+            simulate() {
+                const mu = 0.1005;          // Expected return (10.05%)
+                const sigma = 0.1245;     // Return volatility (12.45%)
+                const rf = 0.0425;        // Risk-free rate
+                const rho = 0.02;         // Risk premium
+                const theta = 0.025;      // Inflation
+                const g = 0.025;          // Income growth
+                const lifespan = 100;
+                const years = this.retirementAge - this.age;
+                const n = 10000;
+                const finalWealths = [];
+
+                for (let sim = 0; sim < n; sim++) {
+                    let W = this.initialWealth;
+                    for (let t = 0; t < years; t++) {
+                        const currentAge = this.age + t;
+                        const yearsToLive = lifespan - currentAge;
+                        const incomeThisYear = this.income * Math.pow(1 + g, t);
+
+                        // Calculate human capital
+                        const remainingYears = this.retirementAge - currentAge - 1;
+                        const futureIncome = Array.from(
+                            { length: remainingYears > 0 ? remainingYears : 0 },
+                            (_, i) => this.income * Math.pow(1 + g, t + i + 1) / Math.pow(1 + rf + rho, i + 1)
+                        );
+                        const HC = futureIncome.reduce((sum, y) => sum + y, 0);
+
+                        const K = theta / (1 - Math.pow(1 + theta, -yearsToLive));
+                        const consumption = (W + incomeThisYear + HC) * K;
+                        const optimalSavings = incomeThisYear - consumption;
+                        
+                        // Apply user's optimal savings percentage only if optimal savings is positive
+                        let actualSavings;
+                        if (optimalSavings <= 0) {
+                            actualSavings = optimalSavings; // Use 100% of optimal savings if negative
+                        } else {
+                            actualSavings = optimalSavings * (this.optimalSavingsPercentage / 100);
+                        }
+
+                        const r = mu + sigma * this.randomNormal();
+                        W = W * (1 + r) + actualSavings;
+                    }
+                    finalWealths.push(W);
+                }
+
+                const sorted = finalWealths.slice().sort((a, b) => a - b);
+                const mean = sorted.reduce((a, b) => a + b, 0) / n;
+                const median = sorted[Math.floor(n / 2)];
+
+                // Create bins for histogram
+                const binCount = 50;
+                const maxW = Math.max(...finalWealths);
+                const binSize = maxW / binCount;
+                const bins = Array.from({ length: binCount }, (_, i) => ({
+                    bin: Math.round(i * binSize),
+                    count: 0
+                }));
+                finalWealths.forEach(w => {
+                    const index = Math.min(Math.floor(w / binSize), binCount - 1);
+                    bins[index].count++;
+                });
+
+                const results = { bins, mean, median };
+                captureEndowmentResults(results);
+                this.displayResults(results);
+            }
+
+            randomNormal() {
+                let u = 0, v = 0;
+                while (u === 0) u = Math.random();
+                while (v === 0) v = Math.random();
+                return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            }
+
+            displayResults(results) {
+                const meanFormatted = results.mean.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+                const medianFormatted = results.median.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+
+                // Create results HTML
+                const resultsHTML = `
+                    <div class="results-header">
+                        <h2>Merton Method - Wealth at Retirement (Age ${this.retirementAge})</h2>
+                        <div class="results-summary">
+                            <div class="mean">Mean: ${meanFormatted}</div>
+                            <div class="median">Median: ${medianFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="wealth-chart-endowment"></canvas>
+                    </div>
+                `;
+
+                // Clear the results container first
+                document.getElementById('simulation-results').innerHTML = '';
+                
+                // Then add the first simulator's results
+                document.getElementById('simulation-results').innerHTML = resultsHTML;
+
+                // Create chart using Chart.js
+                setTimeout(() => {
+                    const ctx = document.getElementById('wealth-chart-endowment').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: results.bins.map(bin => bin.bin.toLocaleString()),
+                            datasets: [{
+                                label: 'Frequency',
+                                data: results.bins.map(bin => bin.count),
+                                backgroundColor: '#007AFF',
+                                borderColor: '#000',
+                                borderWidth: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Wealth ($)'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Frequency'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                annotation: {
+                                    annotations: {
+                                        meanLine: {
+                                            type: 'line',
+                                            xMin: results.mean,
+                                            xMax: results.mean,
+                                            borderColor: 'red',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Mean',
+                                                enabled: true
+                                            }
+                                        },
+                                        medianLine: {
+                                            type: 'line',
+                                            xMin: results.median,
+                                            xMax: results.median,
+                                            borderColor: 'green',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Median',
+                                                enabled: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        class Portfolio6040Simulator {
+            constructor() {
+                this.age = +document.getElementById('age').value;
+                this.retirementAge = +document.getElementById('retirement-age').value;
+                this.initialWealth = +document.getElementById('initial-wealth').value.replace(/,/g, '');
+                this.income = +document.getElementById('income').value.replace(/,/g, '');
+                this.optimalSavingsPercentage = +document.getElementById('optimal-savings-percentage').value;
+            }
+
+            simulate() {
+                const mu = 0.0630;         // Expected return (6.30%)
+                const sigma = 0.1149;      // Return volatility (11.49%)
+                const rf = 0.0425;        // Risk-free rate
+                const rho = 0.02;         // Risk premium
+                const theta = 0.025;      // Inflation
+                const g = 0.025;          // Income growth
+                const lifespan = 100;
+                const years = this.retirementAge - this.age;
+                const n = 10000;
+                const finalWealths = [];
+
+                for (let sim = 0; sim < n; sim++) {
+                    let W = this.initialWealth;
+                    for (let t = 0; t < years; t++) {
+                        const currentAge = this.age + t;
+                        const yearsToLive = lifespan - currentAge;
+                        const incomeThisYear = this.income * Math.pow(1 + g, t);
+
+                        // Calculate human capital
+                        const remainingYears = this.retirementAge - currentAge - 1;
+                        const futureIncome = Array.from(
+                            { length: remainingYears > 0 ? remainingYears : 0 },
+                            (_, i) => this.income * Math.pow(1 + g, t + i + 1) / Math.pow(1 + rf + rho, i + 1)
+                        );
+                        const HC = futureIncome.reduce((sum, y) => sum + y, 0);
+
+                        const K = theta / (1 - Math.pow(1 + theta, -yearsToLive));
+                        const consumption = (W + incomeThisYear + HC) * K;
+                        const optimalSavings = incomeThisYear - consumption;
+                        
+                        // Apply user's optimal savings percentage only if optimal savings is positive
+                        let actualSavings;
+                        if (optimalSavings <= 0) {
+                            actualSavings = optimalSavings; // Use 100% of optimal savings if negative
+                        } else {
+                            actualSavings = optimalSavings * (this.optimalSavingsPercentage / 100);
+                        }
+
+                        const r = mu + sigma * this.randomNormal();
+                        W = W * (1 + r) + actualSavings;
+                    }
+                    finalWealths.push(W);
+                }
+
+                const sorted = finalWealths.slice().sort((a, b) => a - b);
+                const mean = sorted.reduce((a, b) => a + b, 0) / n;
+                const median = sorted[Math.floor(n / 2)];
+
+                // Create bins for histogram
+                const binCount = 50;
+                const maxW = Math.max(...finalWealths);
+                const binSize = maxW / binCount;
+                const bins = Array.from({ length: binCount }, (_, i) => ({
+                    bin: Math.round(i * binSize),
+                    count: 0
+                }));
+                finalWealths.forEach(w => {
+                    const index = Math.min(Math.floor(w / binSize), binCount - 1);
+                    bins[index].count++;
+                });
+
+                const results = { bins, mean, median };
+                capturePortfolio6040Results(results);
+                this.displayResults(results);
+            }
+
+            randomNormal() {
+                let u = 0, v = 0;
+                while (u === 0) u = Math.random();
+                while (v === 0) v = Math.random();
+                return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            }
+
+            displayResults(results) {
+                const meanFormatted = results.mean.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+                const medianFormatted = results.median.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+
+                // Create results HTML
+                const resultsHTML = `
+                    <div class="results-header">
+                        <h2>60/40 Portfolio - Wealth at Retirement (Age ${this.retirementAge})</h2>
+                        <div class="results-summary">
+                            <div class="mean">Mean: ${meanFormatted}</div>
+                            <div class="median">Median: ${medianFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="wealth-chart-6040"></canvas>
+                    </div>
+                `;
+
+                // Append to existing results
+                const resultsContainer = document.getElementById('simulation-results');
+                resultsContainer.innerHTML += resultsHTML;
+
+                // Create chart using Chart.js
+                setTimeout(() => {
+                    const ctx = document.getElementById('wealth-chart-6040').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: results.bins.map(bin => bin.bin.toLocaleString()),
+                            datasets: [{
+                                label: 'Frequency',
+                                data: results.bins.map(bin => bin.count),
+                                backgroundColor: '#34D399',
+                                borderColor: '#000',
+                                borderWidth: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Wealth ($)'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Frequency'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                annotation: {
+                                    annotations: {
+                                        meanLine: {
+                                            type: 'line',
+                                            xMin: results.mean,
+                                            xMax: results.mean,
+                                            borderColor: 'red',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Mean',
+                                                enabled: true
+                                            }
+                                        },
+                                        medianLine: {
+                                            type: 'line',
+                                            xMin: results.median,
+                                            xMax: results.median,
+                                            borderColor: 'green',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Median',
+                                                enabled: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        class Portfolio100Simulator {
+            constructor() {
+                this.age = +document.getElementById('age').value;
+                this.retirementAge = +document.getElementById('retirement-age').value;
+                this.initialWealth = +document.getElementById('initial-wealth').value.replace(/,/g, '');
+                this.income = +document.getElementById('income').value.replace(/,/g, '');
+                this.optimalSavingsPercentage = +document.getElementById('optimal-savings-percentage').value;
+            }
+
+            simulate() {
+                const mu = 0.0744;         // Expected return (7.44%)
+                const sigma = 0.1841;      // Return volatility (18.41%)
+                const rf = 0.0425;        // Risk-free rate
+                const rho = 0.02;         // Risk premium
+                const theta = 0.025;      // Inflation
+                const g = 0.025;          // Income growth
+                const lifespan = 100;
+                const years = this.retirementAge - this.age;
+                const n = 10000;
+                const finalWealths = [];
+
+                for (let sim = 0; sim < n; sim++) {
+                    let W = this.initialWealth;
+                    for (let t = 0; t < years; t++) {
+                        const currentAge = this.age + t;
+                        const yearsToLive = lifespan - currentAge;
+                        const incomeThisYear = this.income * Math.pow(1 + g, t);
+
+                        // Calculate human capital
+                        const remainingYears = this.retirementAge - currentAge - 1;
+                        const futureIncome = Array.from(
+                            { length: remainingYears > 0 ? remainingYears : 0 },
+                            (_, i) => this.income * Math.pow(1 + g, t + i + 1) / Math.pow(1 + rf + rho, i + 1)
+                        );
+                        const HC = futureIncome.reduce((sum, y) => sum + y, 0);
+
+                        const K = theta / (1 - Math.pow(1 + theta, -yearsToLive));
+                        const consumption = (W + incomeThisYear + HC) * K;
+                        const optimalSavings = incomeThisYear - consumption;
+                        
+                        // Apply user's optimal savings percentage only if optimal savings is positive
+                        let actualSavings;
+                        if (optimalSavings <= 0) {
+                            actualSavings = optimalSavings; // Use 100% of optimal savings if negative
+                        } else {
+                            actualSavings = optimalSavings * (this.optimalSavingsPercentage / 100);
+                        }
+
+                        const r = mu + sigma * this.randomNormal();
+                        W = W * (1 + r) + actualSavings;
+                    }
+                    finalWealths.push(W);
+                }
+
+                const sorted = finalWealths.slice().sort((a, b) => a - b);
+                const mean = sorted.reduce((a, b) => a + b, 0) / n;
+                const median = sorted[Math.floor(n / 2)];
+
+                // Create bins for histogram
+                const binCount = 50;
+                const maxW = Math.max(...finalWealths);
+                const binSize = maxW / binCount;
+                const bins = Array.from({ length: binCount }, (_, i) => ({
+                    bin: Math.round(i * binSize),
+                    count: 0
+                }));
+                finalWealths.forEach(w => {
+                    const index = Math.min(Math.floor(w / binSize), binCount - 1);
+                    bins[index].count++;
+                });
+
+                const results = { bins, mean, median };
+                capturePortfolio100Results(results);
+                this.displayResults(results);
+            }
+
+            randomNormal() {
+                let u = 0, v = 0;
+                while (u === 0) u = Math.random();
+                while (v === 0) v = Math.random();
+                return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            }
+
+            displayResults(results) {
+                const meanFormatted = results.mean.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+                const medianFormatted = results.median.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                });
+
+                // Create results HTML
+                const resultsHTML = `
+                    <div class="results-header">
+                        <h2>100% S&P 500 - Wealth at Retirement (Age ${this.retirementAge})</h2>
+                        <div class="results-summary">
+                            <div class="mean">Mean: ${meanFormatted}</div>
+                            <div class="median">Median: ${medianFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="wealth-chart-100"></canvas>
+                    </div>
+                `;
+
+                // Append to existing results
+                const resultsContainer = document.getElementById('simulation-results');
+                resultsContainer.innerHTML += resultsHTML;
+
+                // Create chart using Chart.js
+                setTimeout(() => {
+                    const ctx = document.getElementById('wealth-chart-100').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: results.bins.map(bin => bin.bin.toLocaleString()),
+                            datasets: [{
+                                label: 'Frequency',
+                                data: results.bins.map(bin => bin.count),
+                                backgroundColor: '#F59E0B',
+                                borderColor: '#000',
+                                borderWidth: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Wealth ($)'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Frequency'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                annotation: {
+                                    annotations: {
+                                        meanLine: {
+                                            type: 'line',
+                                            xMin: results.mean,
+                                            xMax: results.mean,
+                                            borderColor: 'red',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Mean',
+                                                enabled: true
+                                            }
+                                        },
+                                        medianLine: {
+                                            type: 'line',
+                                            xMin: results.median,
+                                            xMax: results.median,
+                                            borderColor: 'green',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            label: {
+                                                content: 'Median',
+                                                enabled: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        // Optimal consumption calculator
+        document.getElementById('calculate-optimal').addEventListener('click', function() {
+            // Get input values
+            const age = parseInt(document.getElementById('calc-age').value);
+            const retirementAge = parseInt(document.getElementById('calc-retirement-age').value);
+            const income = parseFloat(document.getElementById('calc-income').value.replace(/,/g, ''));
+            const wealth = parseFloat(document.getElementById('calc-wealth').value.replace(/,/g, ''));
+            
+            // Calculate optimal consumption and savings
+            const result = calculateOptimalConsumption(age, retirementAge, income, wealth);
+            
+            // Display results
+            document.getElementById('optimal-consumption').textContent = formatCurrency(result.consumption);
+            document.getElementById('optimal-savings').textContent = formatCurrency(result.savings);
+            
+            // Show results section
+            document.getElementById('calculator-results').style.display = 'block';
+        });
+
+        // Helper function to calculate optimal consumption
+        function calculateOptimalConsumption(age, retirementAge, income, wealth) {
+            // Constants
+            const rf = 0.0425;        // Risk-free rate
+            const rho = 0.02;         // Risk premium
+            const theta = 0.025;      // Inflation
+            const g = 0.025;          // Income growth
+            const lifespan = 100;     // Expected lifespan
+            
+            // Calculate years until retirement
+            const yearsToRetirement = retirementAge - age;
+            
+            // Calculate years to live
+            const yearsToLive = lifespan - age;
+            
+            // Calculate human capital (present value of future income)
+            const futureIncome = [];
+            for (let i = 0; i < yearsToRetirement; i++) {
+                futureIncome.push(income * Math.pow(1 + g, i) / Math.pow(1 + rf + rho, i));
+            }
+            const humanCapital = futureIncome.reduce((sum, y) => sum + y, 0);
+            
+            // Calculate total wealth (financial + human capital)
+            const totalWealth = wealth + humanCapital;
+            
+            // Calculate consumption factor
+            const K = theta / (1 - Math.pow(1 + theta, -yearsToLive));
+            
+            // Calculate optimal consumption
+            const consumption = totalWealth * K;
+            
+            // Calculate optimal savings
+            const savings = income - consumption;
+            
+            return {
+                consumption: consumption,
+                savings: savings
+            };
+        }
+        
+        function formatCurrency(value) {
+            return '$' + Math.round(value).toLocaleString();
+        }
+
+        // Function to format all inputs on page load
+        function formatInputs() {
+            const formattedInputs = document.querySelectorAll('.formatted-input');
+            formattedInputs.forEach(input => {
+                let value = input.value.replace(/\D/g, '');
+                if (value) {
+                    input.value = parseInt(value).toLocaleString();
+                }
+            });
+        }
+
+        // Logout function
+        function logout() {
+            // Clear login data
+            localStorage.removeItem('endowmentLoggedIn');
+            localStorage.removeItem('endowmentLoginTime');
+            
+            // Redirect to login page
+            window.location.href = 'login.html?redirect=simulator.html';
+        }
+    </script>
+</body>
+</html> 

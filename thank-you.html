@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - Pension 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #f8f8f8;
+            --card-background: #fff;
+            --border-color: #e0e0e0;
+            --success-color: #34D399;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .thank-you-container {
+            max-width: 600px;
+            text-align: center;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--success-color);
+        }
+
+        .thank-you-container h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .thank-you-container p {
+            color: var(--light-text);
+            margin-bottom: 2rem;
+        }
+
+        .next-steps {
+            background-color: #F0F9FF;
+            border: 1px solid #BAE6FD;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .next-steps h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .next-steps ul {
+            list-style: none;
+        }
+
+        .next-steps li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .next-steps li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+        }
+
+        .home-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .thank-you-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="thank-you-container">
+            <div class="success-icon">✓</div>
+            <h1>You're on the waitlist!</h1>
+            <p>Thank you for joining the Pension 2.0 waitlist. We're excited to have you as an early adopter.</p>
+            
+            <div class="next-steps">
+                <h2>What happens next?</h2>
+                <ul>
+                    <li>We'll keep you updated on our progress and launch date</li>
+                    <li>You'll be first in line when we officially launch</li>
+                    <li>Your card will only be charged at launch</li>
+                    <li>You'll receive exclusive early adopter benefits</li>
+                </ul>
+            </div>
+            
+            <a href="index.html" class="home-button">Return to Home</a>
+        </div>
+    </main>
+</body>
+</html> 

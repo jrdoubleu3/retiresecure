@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Pension 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #f8f8f8;
+            --card-background: #fff;
+            --border-color: #e0e0e0;
+            --button-color: #000000;
+            --button-hover-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            background-color: #007AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .checkout-summary {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-form {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-header {
+            margin-bottom: 2rem;
+        }
+
+        .checkout-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkout-header p {
+            color: var(--light-text);
+        }
+
+        .plan-details {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .plan-name {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: var(--light-text);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        #card-element {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        #card-errors {
+            color: var(--error-color);
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .submit-button {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .submit-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .secure-payment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+
+        .secure-payment svg {
+            margin-right: 0.5rem;
+        }
+
+        .payment-note {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .opt-in-checkbox {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .opt-in-checkbox input[type="checkbox"] {
+            margin-top: 0.25rem;
+            width: auto;
+        }
+
+        .opt-in-checkbox label {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#" class="nav-link">Tools</a>
+                    <div class="dropdown-content">
+                        <div class="dropdown-menu">
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Pension 2.0 Simulator</a>
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Optimal Savings Calculator</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="checkout.html" class="cta-button">Reserve My Spot</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="checkout-container">
+            <div class="checkout-summary">
+                <div class="checkout-header">
+                    <h1>Complete Your Order</h1>
+                    <p>You're just a few steps away from joining Pension 2.0</p>
+                </div>
+                
+                <div class="plan-details">
+                    <h2 class="plan-name" id="plan-name">Loading plan details...</h2>
+                    <div class="plan-price" id="plan-price">$0.00</div>
+                    <p class="plan-description" id="plan-description">Loading description...</p>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-item">
+                        <span>Plan</span>
+                        <span id="summary-plan">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Billing Cycle</span>
+                        <span>Monthly</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Total</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checkout-form">
+                <div class="checkout-header">
+                    <h1>Payment Information</h1>
+                    <p>Enter your details to complete your purchase</p>
+                </div>
+                
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="card-element">Credit or Debit Card</label>
+                        <div id="card-element"></div>
+                        <div id="card-errors" role="alert"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-button" id="submit-button">
+                        <span id="button-text">Complete Purchase</span>
+                    </button>
+                    
+                    <div class="secure-payment">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Secure Payment
+                    </div>
+                </form>
+                <div class="opt-in-checkbox">
+                    <input type="checkbox" id="opt-in-checkbox" required>
+                    <label for="opt-in-checkbox">I understand that I won't be charged until Pension 2.0 launches—and only if I opt in.</label>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Pension 2.0</h4>
+                <p>Built for People Who Want Their Money to Work Smarter</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>hello@pension2.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <p>Twitter</p>
+                <p>LinkedIn</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Stripe with your publishable key
+        const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY'); // Replace with your actual publishable key
+        const elements = stripe.elements();
+        
+        // Create card element
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#333',
+                    fontFamily: '"Inter", sans-serif',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+                invalid: {
+                    color: '#dc3545',
+                    iconColor: '#dc3545',
+                },
+            },
+        });
+        
+        // Mount card element
+        cardElement.mount('#card-element');
+        
+        // Handle validation errors
+        cardElement.addEventListener('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+        
+        // Get plan from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = urlParams.get('plan');
+        
+        // Set plan details based on selection
+        function setPlanDetails(plan) {
+            const planNameElement = document.getElementById('plan-name');
+            const planPriceElement = document.getElementById('plan-price');
+            const planDescriptionElement = document.getElementById('plan-description');
+            const summaryPlanElement = document.getElementById('summary-plan');
+            const summaryTotalElement = document.getElementById('summary-total');
+            
+            switch(plan) {
+                case 'autosave':
+                    planNameElement.textContent = 'AutoSave';
+                    planPriceElement.textContent = '$4.99/month';
+                    planDescriptionElement.textContent = 'Start saving from your paycheck automatically';
+                    summaryPlanElement.textContent = 'AutoSave';
+                    summaryTotalElement.textContent = '$4.99/month';
+                    break;
+                case 'pension':
+                    planNameElement.textContent = 'Pension Builder';
+                    planPriceElement.textContent = '0.88% of assets';
+                    planDescriptionElement.textContent = 'Grow your money with a research-backed investment strategy';
+                    summaryPlanElement.textContent = 'Pension Builder';
+                    summaryTotalElement.textContent = '0.88% of assets';
+                    break;
+                case 'payout':
+                    planNameElement.textContent = 'Payout+';
+                    planPriceElement.textContent = '1.10% of assets';
+                    planDescriptionElement.textContent = 'Turn your savings into monthly income that lasts for life';
+                    summaryPlanElement.textContent = 'Payout+';
+                    summaryTotalElement.textContent = '1.10% of assets';
+                    break;
+                case 'default': // Default to AutoSave when coming from home page
+                    planNameElement.textContent = 'AutoSave';
+                    planPriceElement.textContent = '$4.99/month';
+                    planDescriptionElement.textContent = 'Start saving from your paycheck automatically';
+                    summaryPlanElement.textContent = 'AutoSave';
+                    summaryTotalElement.textContent = '$4.99/month';
+                    break;
+                default:
+                    planNameElement.textContent = 'AutoSave'; // Default to AutoSave
+                    planPriceElement.textContent = '$4.99/month';
+                    planDescriptionElement.textContent = 'Start saving from your paycheck automatically';
+                    summaryPlanElement.textContent = 'AutoSave';
+                    summaryTotalElement.textContent = '$4.99/month';
+            }
+        }
+        
+        // Set plan details if plan is selected, otherwise default to AutoSave
+        if (plan) {
+            setPlanDetails(plan);
+        } else {
+            setPlanDetails('default');
+        }
+        
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Check if the opt-in checkbox is checked
+            const optInCheckbox = document.getElementById('opt-in-checkbox');
+            if (!optInCheckbox.checked) {
+                alert('Please confirm that you understand the payment terms by checking the box.');
+                return;
+            }
+            
+            const submitButton = document.getElementById('submit-button');
+            const buttonText = document.getElementById('button-text');
+            
+            // Disable the submit button to prevent multiple submissions
+            submitButton.disabled = true;
+            buttonText.textContent = 'Processing...';
+            
+            // In a real implementation, you would create a payment method and send it to your server
+            // For demo purposes, we'll simulate a successful payment after a delay
+            
+            setTimeout(function() {
+                // Simulate successful payment
+                buttonText.textContent = 'Payment Successful!';
+                submitButton.style.backgroundColor = 'var(--success-color)';
+                
+                // Redirect to a success page after a delay
+                setTimeout(function() {
+                    window.location.href = 'success.html?plan=' + plan;
+                }, 1500);
+            }, 2000);
+            
+            // In a real implementation, you would do something like this:
+            /*
+            stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                },
+            })
+            .then(function(result) {
+                if (result.error) {
+                    // Handle error
+                    const errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Complete Purchase';
+                } else {
+                    // Send payment method ID to your server
+                    return fetch('/process-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            paymentMethodId: result.paymentMethod.id,
+                            plan: plan,
+                            name: document.getElementById('name').value,
+                            email: document.getElementById('email').value,
+                        }),
+                    });
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                if (result.success) {
+                    // Payment successful
+                    buttonText.textContent = 'Payment Successful!';
+                    submitButton.style.backgroundColor = 'var(--success-color)';
+                    
+                    // Redirect to success page
+                    setTimeout(function() {
+                        window.location.href = 'success.html?plan=' + plan;
+                    }, 1500);
+                } else {
+                    // Handle error
+                    const errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error;
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Complete Purchase';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = 'An unexpected error occurred.';
+                submitButton.disabled = false;
+                buttonText.textContent = 'Complete Purchase';
+            });
+            */
+        });
+    </script>
+</body>
+</html> 

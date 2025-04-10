@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Pension 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333;
+            --accent-color: #007AFF;
+            --text-color: #333;
+            --light-text: #666;
+            --background-color: #fff;
+            --card-background: #f8f8f8;
+            --border-color: #e0e0e0;
+            --section-blue: #007AFF;
+            --section-yellow: #FF9500;
+            --section-green: #34C759;
+            --section-purple: #AF52DE;
+            --section-brown: #A2845E;
+            --section-pink: #FF2D55;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            background-color: #007AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            flex: 1;
+            padding: 8rem 2rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .faq-header p {
+            font-size: 1.125rem;
+            color: var(--light-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2.5rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .faq-section-title.blue {
+            color: var(--section-blue);
+            border-bottom-color: var(--section-blue);
+        }
+
+        .faq-section-title.yellow {
+            color: var(--section-yellow);
+            border-bottom-color: var(--section-yellow);
+        }
+
+        .faq-section-title.green {
+            color: var(--section-green);
+            border-bottom-color: var(--section-green);
+        }
+
+        .faq-section-title.purple {
+            color: var(--section-purple);
+            border-bottom-color: var(--section-purple);
+        }
+
+        .faq-section-title.brown {
+            color: var(--section-brown);
+            border-bottom-color: var(--section-brown);
+        }
+
+        .faq-section-title.pink {
+            color: var(--section-pink);
+            border-bottom-color: var(--section-pink);
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.25rem;
+            background-color: var(--card-background);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #f0f0f0;
+        }
+
+        .faq-question.active {
+            background-color: #e8e8e8;
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 1.25rem;
+            background-color: white;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .faq-answer.visible {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .faq-section {
+                padding: 7rem 1.5rem 3rem;
+            }
+
+            .faq-header h1 {
+                font-size: 2rem;
+            }
+
+            .faq-section-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">Pension 2.0</a>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#" class="nav-link">Tools</a>
+                    <div class="dropdown-content">
+                        <div class="dropdown-menu">
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Pension 2.0 Simulator</a>
+                            <a href="login.html?redirect=simulator.html" class="dropdown-item">Optimal Savings Calculator</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="checkout.html" class="cta-button">Reserve My Spot</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="faq-section">
+            <div class="faq-header">
+                <h1>Frequently Asked Questions</h1>
+                <p>Find answers to common questions about Pension 2.0, the Merton Method, and how our platform works.</p>
+            </div>
+
+            <h2 class="faq-section-title blue">Section 1: The Merton Method</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What is the Merton Method?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    A smart, research-based way to decide how much of your money should go into stocks vs. safer investments—based on risk, expected returns, and your goals. It's not about timing the market. It's about sizing your investments in a disciplined way.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is this active trading or market timing?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Not at all. It's like passive investing, but with built-in risk awareness. You're still invested in low-cost index funds, just in a way that reflects your personal risk level and market conditions.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Why should I trust this method?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    It's based on economic research developed by a Nobel Prize–winning economist. It's the same logic used by many institutions—but adapted for individuals.
+                </div>
+            </div>
+
+            <h2 class="faq-section-title yellow">Section 2: How This Differs from Traditional Pensions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How is Pension 2.0 different from a traditional pension?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Traditional pensions were offered by employers. Pension 2.0 is independent—it's yours. You contribute, we manage it professionally, and when you're ready, you get monthly income just like a pension.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I use this alongside my 401(k) or IRA?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Yes! Pension 2.0 is designed to work with your other retirement accounts. It fills the gap that most modern plans leave open.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Who manages the investments?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    We do. Your money is invested using a professional, research-backed framework—like how university endowments manage their portfolios.
+                </div>
+            </div>
+
+            <h2 class="faq-section-title green">Section 3: Product Structure & Pricing</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What are the different plans?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    We're launching in phases:<br><br>
+                    AutoSave – Helps you save automatically from your paycheck<br>
+                    Pension Builder – Adds smart investing to grow your wealth<br>
+                    Payout+ – Turns your savings into monthly income when you stop working
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What does it cost?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    AutoSave: $4.99/month<br>
+                    Pension Builder: 0.88% of your balance<br>
+                    Payout+: 1.10% of your balance<br><br>
+                    Right now, we're testing interest and collecting waitlist signups—no payments yet.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do I need to commit or pay now?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    No. By joining the waitlist, you're just reserving your spot. You won't be charged until we're ready to launch and you opt in.
+                </div>
+            </div>
+
+            <h2 class="faq-section-title brown">Section 4: Saving, Spending & Withdrawals</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How do withdrawals work?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Once you stop working, Payout+ automatically sends you monthly income—optimized to last your lifetime and protect your future.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What if I need to access my money early?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Unlike traditional pensions, your funds stay liquid. You can withdraw anytime, though we encourage a long-term mindset.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How much do I need to get started?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    You can start small—like $1 for every hour you work—or save the fully optimized amount we calculate for you.
+                </div>
+            </div>
+
+            <h2 class="faq-section-title purple">Section 5: Security & Trust</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is my money safe?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Your funds are held with a regulated, secure custodian. We never touch your money directly.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Who actually manages the money?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    We partner with institutional-grade portfolio managers and apply the Merton Method to guide decisions.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is this a bank? A fintech? An advisor?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    It's something new: a system that gives you the structure of a pension, the freedom of a personal account, and the intelligence of world-class research.
+                </div>
+            </div>
+
+            <h2 class="faq-section-title pink">Section 6: Getting Started</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How do I join?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Click "Join the Waitlist" anywhere on the site. It takes under a minute.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What happens next?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    We'll keep you updated. You'll be the first to know when AutoSave is live, and you'll lock in early access pricing.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I refer a friend?</span>
+                    <div class="faq-toggle">▼</div>
+                </div>
+                <div class="faq-answer">
+                    Coming soon! Early members will have access to a referral program.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const isActive = question.classList.contains('active');
+                
+                // Close all other questions
+                document.querySelectorAll('.faq-question').forEach(q => {
+                    if (q !== question) {
+                        q.classList.remove('active');
+                        q.nextElementSibling.classList.remove('visible');
+                    }
+                });
+                
+                // Toggle current question
+                question.classList.toggle('active');
+                answer.classList.toggle('visible');
+            });
+        });
+    </script>
+</body>
+</html> 
