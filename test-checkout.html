@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Stripe SetupIntent</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    #card-element { padding: 10px; border: 1px solid #ccc; margin-bottom: 10px; border-radius: 4px; }
+    #message { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Reserve Your Spot</h2>
+  <form id="reserve-form">
+    <input type="email" id="email" placeholder="Your Email" required><br><br>
+    <div id="card-element"></div><br>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="message"></div>
+
+  <script>
+    const stripe = Stripe("pk_test_51RCRWPEJ4peyB18T2YKWKKE8fpbVZPZxCjPQ0Rg2zrsftEzqsJuCJ4UXkFuWVnPXiZsJYybeEMAcnLuEW9eLB46a00Kml1SFOk");
+
+    const elements = stripe.elements();
+    const card = elements.create("card");
+    card.mount("#card-element");
+
+    const form = document.getElementById("reserve-form");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.textContent = "";
+
+      const email = document.getElementById("email").value;
+
+      try {
+        const res = await fetch("/api/create-setup-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+        const clientSecret = data.clientSecret;
+
+        const result = await stripe.confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: card,
+            billing_details: { email },
+          },
+        });
+
+        if (result.error) {
+          message.textContent = `❌ ${result.error.message}`;
+        } else {
+          message.textContent = "✅ Card saved successfully!";
+        }
+      } catch (err) {
+        message.textContent = `❌ ${err.message}`;
+        console.error("Error submitting form:", err);
+      }
+    });
+  </script>
+</body>
+</html>
