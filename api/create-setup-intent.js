@@ -18,8 +18,9 @@ export default async function handler(req, res) {
 
     res.status(200).json({ clientSecret: setupIntent.client_secret });
   } catch (error) {
-    console.error('Stripe error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Stripe error:', error.message, error.stack);
+res.status(500).json({ error: error.message });
+
   }
 }
 // touched to trigger git tracking
