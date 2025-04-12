@@ -621,24 +621,14 @@
     <script src="wealth_simulator_6040.js"></script>
     <script src="wealth_simulator_100.js"></script>
     <script>
-        // Check login status on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Check login status
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            const loginTime = localStorage.getItem('loginTime');
-            const currentTime = new Date().getTime();
-            
-            // If not logged in or session expired, redirect to login page
-            if (!isLoggedIn || !loginTime || (currentTime - loginTime) > 24 * 60 * 60 * 1000) {
-                window.location.href = 'login.html?redirect=simulator.html';
+            // Check login status using sessionStorage
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.replace('login.html?redirect=simulator.html');
                 return;
             }
             
-            // If logged in, show the content
-            document.querySelector('.simulator-section').style.display = 'block';
-            document.querySelector('.calculator-section').style.display = 'block';
-            
-            // Format inputs and initialize charts
+            // Initialize the page
             formatInputs();
             
             // Add event listeners for input formatting
@@ -1353,14 +1343,12 @@
             });
         }
 
-        // Logout function
+        // Update logout function
         function logout() {
-            // Clear login data
-            localStorage.removeItem('endowmentLoggedIn');
-            localStorage.removeItem('endowmentLoginTime');
-            
+            // Clear login data from sessionStorage
+            sessionStorage.removeItem('isLoggedIn');
             // Redirect to login page
-            window.location.href = 'login.html?redirect=simulator.html';
+            window.location.replace('login.html?redirect=simulator.html');
         }
     </script>
 </body>

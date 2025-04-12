@@ -318,14 +318,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const redirectTo = urlParams.get('redirect') || 'index.html';
         
-        // Only redirect if we have a redirect parameter and are already logged in
-        // AND we're not already on the login page
-        if (redirectTo !== 'index.html' && 
-            localStorage.getItem('isLoggedIn') === 'true' && 
-            !window.location.href.includes('login.html')) {
-            window.location.href = redirectTo;
-        }
-        
         // Enable/disable login button based on checkbox status
         const certifications = document.querySelectorAll('.certification-item input[type="checkbox"]');
         const loginButton = document.getElementById('login-button');
@@ -367,9 +359,8 @@
             }
             
             if (email && password) {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('loginTime', new Date().getTime().toString());
-                window.location.href = redirectTo;
+                sessionStorage.setItem('isLoggedIn', 'true');
+                window.location.replace(redirectTo);
             }
         });
     </script>
