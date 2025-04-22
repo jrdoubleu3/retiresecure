@@ -41,19 +41,19 @@ app.post('/process-payment', async (req, res) => {
                 });
             }
 
-            // Attach new payment method
+            // Attach new payment method - using paymentMethodId directly
             await stripe.paymentMethods.attach(paymentMethodId, {
                 customer: customer.id
             });
 
-            // Set as default payment method
+            // Set as default payment method - using paymentMethodId directly
             await stripe.customers.update(customer.id, {
                 invoice_settings: {
                     default_payment_method: paymentMethodId
                 }
             });
         } else {
-            // Create new customer
+            // Create new customer - using paymentMethodId directly
             customer = await stripe.customers.create({
                 email: email,
                 name: name,
