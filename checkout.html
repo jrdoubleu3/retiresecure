@@ -494,10 +494,12 @@
 
     <script>
         // Initialize Stripe with your publishable key
-        const stripe = Stripe('pk_test_51RCRWX2SLGRWQAjxVBxrSMi21aI7wa2VDTx2CANW6VLbbMHLkOW3n3VAK1opejEhGYw7FlqwEESA3ZCIZeo5xmWW0029v8RhZr'); // Replace with your actual publishable key
+        const stripe = Stripe('pk_test_51RCRWX2SLGRWQAjxVBxrSMi21aI7wa2VDTx2CANW6VLbbMHLkOW3n3VAK1opejEhGYw7FlqwEESA3ZCIZeo5xmWW0029v8RhZr');
+        
+        // Create Elements instance
         const elements = stripe.elements();
         
-        // Create card element
+        // Create card element with existing styling
         const cardElement = elements.create('card', {
             style: {
                 base: {
@@ -562,15 +564,8 @@
                     summaryPlanElement.textContent = 'Payout+';
                     summaryTotalElement.textContent = '1.10% of assets';
                     break;
-                case 'default': // Default to AutoSave when coming from home page
-                    planNameElement.textContent = 'AutoSave';
-                    planPriceElement.textContent = '$4.99/month';
-                    planDescriptionElement.textContent = 'Start saving from your paycheck automatically';
-                    summaryPlanElement.textContent = 'AutoSave';
-                    summaryTotalElement.textContent = '$4.99/month';
-                    break;
                 default:
-                    planNameElement.textContent = 'AutoSave'; // Default to AutoSave
+                    planNameElement.textContent = 'AutoSave';
                     planPriceElement.textContent = '$4.99/month';
                     planDescriptionElement.textContent = 'Start saving from your paycheck automatically';
                     summaryPlanElement.textContent = 'AutoSave';
@@ -578,7 +573,7 @@
             }
         }
         
-        // Set plan details if plan is selected, otherwise default to AutoSave
+        // Set initial plan details
         if (plan) {
             setPlanDetails(plan);
         } else {
@@ -599,6 +594,10 @@
             
             const submitButton = document.getElementById('submit-button');
             const buttonText = document.getElementById('button-text');
+            const errorElement = document.getElementById('card-errors');
+            
+            // Clear any previous errors
+            errorElement.textContent = '';
             
             // Disable the submit button to prevent multiple submissions
             submitButton.disabled = true;
@@ -617,24 +616,46 @@
 
                 if (result.error) {
                     // Handle error from Stripe
-                    const errorElement = document.getElementById('card-errors');
                     errorElement.textContent = result.error.message;
                     submitButton.disabled = false;
                     buttonText.textContent = 'Complete Purchase';
-                } else {
-                    // Simulate successful payment
+                    return;
+                }
+
+                // Send payment information to the backend
+                const response = await fetch('/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        paymentMethodId: result.paymentMethod.id,
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        plan: plan || 'default'
+                    }),
+                });
+
+                const paymentResult = await response.json();
+
+                if (paymentResult.success) {
+                    // Payment successful
                     buttonText.textContent = 'Payment Successful!';
                     submitButton.style.backgroundColor = 'var(--success-color)';
                     
-                    // Redirect to a success page after a delay
-                    setTimeout(function() {
-                        window.location.href = 'success.html?plan=' + plan;
-                    }, 1500);
+                    // Redirect to success page
+                    window.location.href = `success.html?plan=${encodeURIComponent(plan)}`;
+                } else {
+                    // Handle error from server
+                    errorElement.textContent = paymentResult.error || 'Payment failed. Please try again.';
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Complete Purchase';
                 }
+                
             } catch (error) {
+                // Handle unexpected errors
                 console.error('Error:', error);
-                const errorElement = document.getElementById('card-errors');
-                errorElement.textContent = 'An unexpected error occurred.';
+                errorElement.textContent = 'An unexpected error occurred. Please try again.';
                 submitButton.disabled = false;
                 buttonText.textContent = 'Complete Purchase';
             }
